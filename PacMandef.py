@@ -1,8 +1,10 @@
+import threading
 import tkinter as tk
 from tkinter import *
 from threading import Thread
 import random
 import time
+import keyboard
 from PIL import ImageTk, Image
 from tkinter import Toplevel
 import pygame
@@ -21,7 +23,7 @@ window = None
 filas = 40
 columnas = 36
 ventana_ancho = 540
-ventana_alto = 600
+ventana_alto = 700
 
 #Definir colores
 blanco = (255, 255, 255)
@@ -40,29 +42,77 @@ capsula = 2
 alimentoComida = 3
 vacio = 4
 
+MoverFantasmas= True
+
+ListaFantasmas = []
+
+
+# Inicializar el score
+score = 0
+
+# Función para mostrar el score en la pantalla
+
+
+running = True
+
+button_width = 100
+button_height = 40
+button_x = ventana_ancho - button_width - 10  # Alineado a la derecha
+button_y = ventana_alto - button_height - 10
+
+
 
 class Juego:
-    def __init__(self, tablero,  nivel, score, x, y ):
+    def __init__(self, tablero,  nivel, score, Jugador, Fantasmas ):
         self.tablero = tablero
         self.nivel = nivel
         self.score = score
-        self.x = x
-        self.y = y
-        
+        self.Jugador = Jugador
+        self.Fantasmas = Fantasmas
+
     def iniciarJuego(self):
         self.score = 0
-        #instancia un jugador
 
 class PacMan:
-    def __init__(self,velocidad):
-        self,velocidad = velocidad
+    def __init__(self,velocidad,posicion_x,posicion_y):
+        self.velocidad = velocidad
+        self.x = 0 
+        self.y = 0
 
 class Fantasma:
     def __init__(self, color):
         self.estado = True  
-        self.posicion_x = 0 
-        self.posicion_y = 0  
+        self.posicion_x = 18 
+        self.posicion_y = 20  
         self.color = color 
+
+    def moverIzquierda(self,tablero,xJugador, yJugador):
+        next_x = self.posicion_x - 1
+        if tablero[self.posicion_y][next_x] in (1, 2, 3, 4):
+            self.posicion_x = next_x
+        if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
+             messagebox.showinfo("Se acabo el juego")
+
+    def moverDerecha(self,tablero,xJugador, yJugador):
+        next_x = self.posicion_x + 1
+        if tablero[self.posicion_y][next_x] in (1, 2, 3, 4):
+            self.posicion_x = next_x
+        if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
+            messagebox.showinfo("Se acabo el juego")
+
+    def moverArriba(self,tablero,xJugador, yJugador):
+        next_y = self.posicion_y - 1
+        if tablero[next_y][self.posicion_x] in (1, 2, 3, 4):
+           self.posicion_y = next_y
+        if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
+             messagebox.showinfo("Se acabo el juego")
+
+    def moverAbajo(self,tablero,xJugador, yJugador):
+        next_y = self.posicion_y + 1
+        if tablero[next_y][self.posicion_x] in (1, 2, 3,4):
+           self.posicion_y = next_y
+        if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
+             messagebox.showinfo("Se acabo el juego")
 
 
 #Inicializa Pygame y carga la música en la función play()
@@ -99,52 +149,96 @@ def ventana_inicio():
         pygame.init()
         ventana = pygame.display.set_mode((ventana_ancho, ventana_alto))
         pygame.display.set_caption("PacMan")
+        font = pygame.font.Font(None, 36)
+        clock = pygame.time.Clock()
+
         
         #Funcion para dibujar tablero de juego
         global Partida
-        tableroJuego = [[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                        [2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                        [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+        def show_score():
+            score_text = font.render(f"Score: {Partida.score}", True, blanco)
+            ventana.blit(score_text, (10, 600))
 
-                            ]
-        Partida = Juego(tableroJuego,1,0, 0, 0)
+       
+        tableroJuego = [[4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+
+                    ]
+        
+
+        Jugador = PacMan(0, 0, 0)
+        ListaFantasmas = []
+        for i in range (1,4):
+            ListaFantasmas.append(Fantasma(rojo))
+        Partida = Juego(tableroJuego,1,0, Jugador, ListaFantasmas)
+
+        def mover(fantasma,velocidad):
+            global MoverFantasmas
+            while MoverFantasmas:
+                time.sleep(velocidad)
+                #hacer un ramdon para determinar el movimiento
+                direccion = random.choice(["izquierda", "derecha", "arriba", "abajo"])
+                
+                if direccion == "izquierda":
+                    fantasma.moverIzquierda(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                elif direccion == "derecha":
+                    fantasma.moverDerecha(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                elif direccion == "arriba":
+                    fantasma.moverArriba(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                elif direccion == "abajo":
+                    fantasma.moverAbajo(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                
+
+        for fantasma in Partida.Fantasmas:
+            # Crea un objeto de hilo
+            hilo = threading.Thread(target=mover,args=(fantasma,1))
+
+            # Inicia la ejecución del hilo
+            hilo.start()
+
+        jugador_imagen = pygame.image.load("jugador.png") 
+        jugador_imagen = pygame.transform.scale(jugador_imagen, (tamano_casilla, tamano_casilla))
+
+        fantasma_rojo = pygame.image.load("rojo.png") 
+        fantasma_rojo = pygame.transform.scale(fantasma_rojo, (tamano_casilla, tamano_casilla))
             
         #Funcion para dibujar tablero de juego
         def dibujar_tablero():
@@ -170,41 +264,99 @@ def ventana_inicio():
                     elif Partida.tablero[fila][columna]==4:
                         pygame.draw.rect(ventana, negro, (columna * tamano_casilla, fila * tamano_casilla, tamano_casilla, tamano_casilla))
                     
-                    # Dibujar el objeto Pac-Man
-                    x = Partida.x * tamano_casilla + tamano_casilla // 2
-                    y = Partida.y * tamano_casilla + tamano_casilla // 2
-                    radio = tamano_casilla // 4
-                    pygame.draw.circle(ventana, rojo, (x, y), radio)
-
                     
+                
+                jugador_rect = jugador_imagen.get_rect()
+                jugador_rect.topleft = (Jugador.x * tamano_casilla, Jugador.y * tamano_casilla)
+                ventana.blit(jugador_imagen, jugador_rect.topleft)
+
+                fantasmaRojo = jugador_imagen.get_rect()
+                fantasmaRojo.topleft = (fantasma.posicion_x * tamano_casilla, fantasma.posicion_y * tamano_casilla)
+                ventana.blit(fantasma_rojo, fantasmaRojo.topleft)
+
+        def draw_button():
+             # Alineado en la parte inferior
+            pygame.draw.rect(ventana, blanco,  (button_x, button_y, button_width, button_height))
+            font = pygame.font.Font(None, 36)
+            button_text = font.render("Regresar", True, negro)
+            text_rect = button_text.get_rect(center=(button_x + button_width // 2, button_y + button_height // 2))
+            ventana.blit(button_text, text_rect.topleft)
+
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                    
+                    
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if (button_x <= event.pos[0] <= button_x + button_width and button_y <= event.pos[1] <= button_y + button_height):
+                        # Regresar a la Ventana1
+                        pygame.quit()
+                        sys.exit()
+
+                    # Regresar a la Ventana
+                
+                clock.tick(10)
+                    # Regresar a la Ventana
+            
+            draw_button()
+            show_score()
+            pygame.display.flip()
+
+                # Controlar la velocidad de actualización
+            clock.tick(60)
+
                 
                 #Control de movimiento de Pac-Man
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_UP]:
-                    next_y = Partida.y - 1
-                    if Partida.tablero[next_y][Partida.x] in (1, 2, 3):
-                        Partida.y = next_y
-                if keys[pygame.K_DOWN]:
-                    next_y = Partida.y + 1
-                    if Partida.tablero[next_y][Partida.x] in (1, 2, 3):
-                        Partida.y = next_y
-                if keys[pygame.K_LEFT]:
-                    next_x = Partida.x - 1
-                    if Partida.tablero[Partida.y][next_x] in (1, 2, 3):
-                        Partida.x = next_x
-                if keys[pygame.K_RIGHT]:
-                    next_x = Partida.x + 1
-                    if Partida.tablero[Partida.y][next_x] in (1, 2, 3):
-                        Partida.x = next_x
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_UP] and Jugador.y > 0 and Partida.tablero[Jugador.y - 1][Jugador.x] != 0:
+                if Partida.tablero[Jugador.y - 1][Jugador.x] == 1:
+                    Partida.tablero[Jugador.y - 1][Jugador.x] = 4
+                    Partida.score+=18
+                elif Partida.tablero[Jugador.y - 1][Jugador.x] == 2:
+                    Partida.tablero[Jugador.y - 1][Jugador.x] = 4
+                elif Partida.tablero[Jugador.y - 1][Jugador.x] == 3:
+                    Partida.tablero[Jugador.y - 1][Jugador.x] = 4  
+                
+                Jugador.y -= 1
+            if keys[pygame.K_DOWN] and Jugador.y < 39  and Partida.tablero[Jugador.y + 1][Jugador.x] != 0:
+                if Partida.tablero[Jugador.y + 1][Jugador.x] == 1:
+                    Partida.tablero[Jugador.y + 1][Jugador.x] = 4
+                    Partida.score+=18
+                elif Partida.tablero[Jugador.y + 1][Jugador.x] == 2:
+                    Partida.tablero[Jugador.y + 1][Jugador.x] = 4
+                elif Partida.tablero[Jugador.y + 1][Jugador.x] == 3:
+                    Partida.tablero[Jugador.y + 1][Jugador.x] = 4
+                    
+                Jugador.y += 1
+            if keys[pygame.K_LEFT] and Jugador.x > 0 and Partida.tablero[Jugador.y][Jugador.x - 1] != 0:
+                if Partida.tablero[Jugador.y][Jugador.x - 1] == 1:
+                    Partida.tablero[Jugador.y][Jugador.x - 1] = 4
+                    Partida.score+=18
+                elif Partida.tablero[Jugador.y][Jugador.x - 1] == 2:
+                    Partida.tablero[Jugador.y][Jugador.x - 1] = 4
+                elif Partida.tablero[Jugador.y][Jugador.x - 1] == 3:
+                    Partida.tablero[Jugador.y][Jugador.x - 1] = 4
+                    
+                Jugador.x -= 1
+            if keys[pygame.K_RIGHT] and Jugador.x < 35 and Partida.tablero[Jugador.y][Jugador.x + 1] != 0:
+                if Partida.tablero[Jugador.y][Jugador.x + 1] == 1:
+                    Partida.tablero[Jugador.y][Jugador.x + 1] = 4
+                    Partida.score+=18
+                elif Partida.tablero[Jugador.y][Jugador.x + 1] == 2:
+                    Partida.tablero[Jugador.y][Jugador.x + 1] = 4
+                elif Partida.tablero[Jugador.y][Jugador.x + 1] == 3:
+                    Partida.tablero[Jugador.y][Jugador.x + 1] = 4
+                    
+                Jugador.x += 1
+
+           
 
             dibujar_tablero()
             pygame.display.update()
-    
+
+
     
     #Ventana de mejores puntajes
     def abrirventana3():
