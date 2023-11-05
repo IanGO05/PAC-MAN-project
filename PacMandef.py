@@ -118,7 +118,7 @@ class Fantasma:
 #Inicializa Pygame y carga la música en la función play()
 pygame.mixer.init()
 def play():
-    pygame.mixer.music.load("musica.mp3")
+    pygame.mixer.music.load("pacman-song.mp3")
     pygame.mixer.music.play(loops=0)
 
 def stop_music():
@@ -276,7 +276,7 @@ def ventana_inicio():
 
         def draw_button():
              # Alineado en la parte inferior
-            pygame.draw.rect(ventana, blanco,  (button_x, button_y, button_width, button_height))
+            pygame.draw.rect(ventana, blanco, (button_x, button_y, button_width, button_height))
             font = pygame.font.Font(None, 36)
             button_text = font.render("Regresar", True, negro)
             text_rect = button_text.get_rect(center=(button_x + button_width // 2, button_y + button_height // 2))
@@ -299,13 +299,13 @@ def ventana_inicio():
                 
                 clock.tick(10)
                     # Regresar a la Ventana
-            
+            ventana.fill(negro)
             draw_button()
             show_score()
             pygame.display.flip()
 
                 # Controlar la velocidad de actualización
-            clock.tick(60)
+            clock.tick(100)
 
                 
                 #Control de movimiento de Pac-Man
