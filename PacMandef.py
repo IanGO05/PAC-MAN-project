@@ -4,6 +4,7 @@ from tkinter import *
 from threading import Thread
 import random
 import time
+import tkinter
 import keyboard
 from PIL import ImageTk, Image
 from tkinter import Toplevel
@@ -35,7 +36,8 @@ rojo = (255, 0, 0)
 tamano_casilla = ventana_ancho // columnas
 
 Partida = None
-
+entryNombre= "" 
+nombreJugadorActual = ""
 pared = 0
 alimento = 1
 capsula = 2
@@ -141,7 +143,52 @@ def ventana_inicio():
     #Titulo Ventana Principal
     tituloPrincipal = tk.Label(ventana1, text="ROBOTS", font=("Courier New", 12, "bold"), background="grey", fg="white")
     tituloPrincipal.place(x=1400, y=25)
+    def iniciar(vent):
+        global entryNombre
+        if (str(entryNombre.get())!=""):
+            entryNombre =str(entryNombre.get())
+            vent.destroy()
+            Ventana_juego()
+        else:
+            messagebox.showinfo("Advertencia", "Debe ingresar un nombre valido")
+
+    def ventana_nombre():
+        global entryNombre
+        ventana1.withdraw()
+        nombre = Toplevel()
+        nombre.title("Nombre jugador") #nombre de la ventana
+        nombre.geometry("400x300") # dimensiones de la ventana
+        nombre.configure(background="CadetBlue1") #color del fondo 
+        #canvas
+        canvasC3 = tkinter.Canvas(nombre, width=300, height=200, borderwidth=0, highlightthickness=0, background="pink")
+        canvasC3.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
+        #titulo para identicar que tiene que hacer el jugador 
+        titulo4= tkinter.Label(canvasC3, text="Ingrese su nombre:", font=("Verdana", 12), background="pink", fg="black")
+        titulo4.place(x=50, y=60)
+        # barra donde se escribe el nombre
+        entryNombre= tkinter.Entry(nombre, width=40)
+        entryNombre.pack()
+        entryNombre.place(x=70, y=150)
+        #boton aceptar para ir a la pantalla de juego
+        Aceptar_Boton= tkinter.Button(nombre, text= "Aceptar", command=lambda:iniciar(nombre), fg=("white"), bg=("coral"))
+        Aceptar_Boton.pack(pady=10)
+        Aceptar_Boton.place(x=150, y=200)
     
+    def agarrar_nombre():
+        global nombreJugadorActual
+        global score
+        nombre = nombreJugadorActual
+        print(nombre)
+        try:
+            with open('data.txt', 'a') as file:  # agrega al txt los datos
+
+                file.write(f'{score}-{nombre},')
+                file.close()
+        except:
+            with open('data.txt', 'w') as file:  # crea el txt de no existir
+                file.write(f'{score}: {nombre},')
+
+
     #Ventana JUEGO
     def Ventana_juego():
         global ventana_alto
@@ -158,7 +205,17 @@ def ventana_inicio():
         def show_score():
             score_text = font.render(f"Score: {Partida.score}", True, blanco)
             ventana.blit(score_text, (10, 600))
+        
+        
+        def nombre():
+            global nombreJugadorActual
+            if(entryNombre != ""):
+                NombreJugador = str(entryNombre)
+                nombreJugadorActual = str(entryNombre)
+            juganombre = font.render(f"Jugador@: {NombreJugador}", True, blanco)
+            ventana.blit(juganombre, (10, 620))
 
+       
        
         tableroJuego = [
                 [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
@@ -311,6 +368,7 @@ def ventana_inicio():
                 if Partida.tablero[Jugador.y - 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
                     Partida.score+=2
+                    agarrar_nombre()
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 3:
@@ -321,6 +379,7 @@ def ventana_inicio():
                 if Partida.tablero[Jugador.y + 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
                     Partida.score+=2
+                    agarrar_nombre()
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 3:
@@ -331,6 +390,7 @@ def ventana_inicio():
                 if Partida.tablero[Jugador.y][Jugador.x - 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
                     Partida.score+=2
+                    agarrar_nombre()
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 3:
@@ -341,6 +401,7 @@ def ventana_inicio():
                 if Partida.tablero[Jugador.y][Jugador.x + 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
                     Partida.score+=2
+                    agarrar_nombre()
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 3:
@@ -356,6 +417,7 @@ def ventana_inicio():
             clock.tick(100)
 
             show_score()
+            nombre() 
             dibujar_tablero()
             pygame.display.update()
 
@@ -363,32 +425,43 @@ def ventana_inicio():
     
     #Ventana de mejores puntajes
     def abrirventana3():
-        ventana1.withdraw()
-        ventana3 = Toplevel()
-        ventana3.title("Mejores Puntajes")
-        ventana3.geometry("800x480")
-        ventana3.configure(background="black")
-        canvasC3 = tk.Canvas(ventana3, width=800, height=680, borderwidth=0, highlightthickness=0, background="black")
-        canvasC3.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-        titulo= tk.Label(canvasC3, text="Mejores Puntuaciones", font=("Times New Roman", 17), background="black", fg="white")
-        titulo.place(x=290, y=120)
-        ventana3.resizable(height=False, width=False)
+        menuRank = Tk()
+        menuRank.title('Salon de la fama')
+        fondo = Canvas(menuRank, width=800, height=500, border=0, bg='pink')
+        fondo.pack()
         
-        texto= tk.Label(canvasC3, text="Jeff: 1500pts "
-                                        "\nJose: 1000pts" 
-                                        "\nIan: 950pts"
-
-                                        
-                                ,font=("Courier New", 17, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
-        texto.place(x=50, y=180)
-    
-        #Botón back de Mejores Puntajes        
-        def back():
-            ventana3.destroy()
+           
+           # Regresar a la ventana principal
+        def regresa():
+            menuRank.destroy()
             ventana1.deiconify()
-        botonBack = tk.Button(ventana3, text="Back", command= back,  font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), width=8)
-        botonBack.pack()
-        botonBack.place(x=650, y=420)
+         #boton regresar
+        botonRegre = tkinter.Button(fondo, text="❌", command=regresa)
+        botonRegre.pack()
+        botonRegre.place(x=30 , y=30)
+
+        try: #trata de abrir el domcunento con los puntajes y los recrea en la pantalla una tabla de los mejores
+            file = open('data.txt','r')
+            read = file.read().split(',')
+            print(read)
+            top= natsorted(read,reverse=True)
+            print(top)
+            puesto1 = Label(fondo,text=f'1) {top[0]}',width=15, height=1,font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto1.place(x=320, y=25)
+            puesto2 = Label(fondo,text=f'2) {top[1]}',width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto2.place(x=320, y=100)
+            puesto3 = Label(fondo,text=f'3) {top[2]}', width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto3.place(x=320, y=200)
+            puesto4 = Label(fondo,text=f'4) {top[3]}', width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto4.place(x=320, y=300)
+            puesto5 = Label(fondo,text=f'5) {top[4]}', width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto5.place(x=320, y=400)
+
+        except:
+            None
+
+        menuRank.mainloop()
+        
         
     
     #Fución abrir ventana de Configuración
@@ -498,7 +571,7 @@ def ventana_inicio():
     
     
     #Botones Principales VENTANA 1
-    boton1 = tk.Button(ventana1, text="Jugar", command=Ventana_juego,font=("Courier New", 16, "bold"), fg=("white"), bg=("black"))
+    boton1 = tk.Button(ventana1, text="Jugar", command=ventana_nombre,font=("Courier New", 16, "bold"), fg=("white"), bg=("black"))
     boton1.place(x=240, y=60)
     boton2 = tk.Button(ventana1, text="Configuración",command=abrirventana4, font=("Courier New", 16, "bold"), fg=("white"), bg=("black"))
     boton2.place(x=185, y=217)
