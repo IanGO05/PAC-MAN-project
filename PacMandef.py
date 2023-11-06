@@ -160,7 +160,8 @@ def ventana_inicio():
             ventana.blit(score_text, (10, 600))
 
        
-        tableroJuego = [[4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+        tableroJuego = [
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
@@ -234,6 +235,8 @@ def ventana_inicio():
             # Inicia la ejecución del hilo
             hilo.start()
 
+            
+
         jugador_imagen = pygame.image.load("jugador.png") 
         jugador_imagen = pygame.transform.scale(jugador_imagen, (tamano_casilla, tamano_casilla))
 
@@ -299,21 +302,15 @@ def ventana_inicio():
                 
                 clock.tick(10)
                     # Regresar a la Ventana
-            ventana.fill(negro)
-            draw_button()
-            show_score()
-            pygame.display.flip()
-
-                # Controlar la velocidad de actualización
-            clock.tick(100)
-
+            
+            
                 
                 #Control de movimiento de Pac-Man
-            keys = pygame.key.get_pressed()
+                keys = pygame.key.get_pressed()
             if keys[pygame.K_UP] and Jugador.y > 0 and Partida.tablero[Jugador.y - 1][Jugador.x] != 0:
                 if Partida.tablero[Jugador.y - 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
-                    Partida.score+=18
+                    Partida.score+=2
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 3:
@@ -323,7 +320,7 @@ def ventana_inicio():
             if keys[pygame.K_DOWN] and Jugador.y < 39  and Partida.tablero[Jugador.y + 1][Jugador.x] != 0:
                 if Partida.tablero[Jugador.y + 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
-                    Partida.score+=18
+                    Partida.score+=2
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 3:
@@ -333,7 +330,7 @@ def ventana_inicio():
             if keys[pygame.K_LEFT] and Jugador.x > 0 and Partida.tablero[Jugador.y][Jugador.x - 1] != 0:
                 if Partida.tablero[Jugador.y][Jugador.x - 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
-                    Partida.score+=18
+                    Partida.score+=2
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 3:
@@ -343,16 +340,22 @@ def ventana_inicio():
             if keys[pygame.K_RIGHT] and Jugador.x < 35 and Partida.tablero[Jugador.y][Jugador.x + 1] != 0:
                 if Partida.tablero[Jugador.y][Jugador.x + 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
-                    Partida.score+=18
+                    Partida.score+=2
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 3:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
                     
                 Jugador.x += 1
+            ventana.fill(negro)
+            draw_button()
+            
+            pygame.display.flip()
 
-           
+                # Controlar la velocidad de actualización
+            clock.tick(100)
 
+            show_score()
             dibujar_tablero()
             pygame.display.update()
 
