@@ -32,7 +32,9 @@ negro = (0, 0, 0)
 azul = (0, 0, 102)
 amarillo = (255, 255, 0)
 naranja = "#FF4500"
+rosado = "#FF4501"
 rojo = (255, 0, 0)
+celeste = (255, 19, 0)
 tamano_casilla = ventana_ancho // columnas
 
 Partida = None
@@ -85,36 +87,46 @@ class Fantasma:
     def __init__(self, color):
         self.estado = True  
         self.posicion_x = 18 
-        self.posicion_y = 20  
+        self.posicion_y = 20 
+        self.anterior = 4 
         self.color = color 
 
     def moverIzquierda(self,tablero,xJugador, yJugador):
+        global MoverFantasmas
         next_x = self.posicion_x - 1
         if tablero[self.posicion_y][next_x] in (1, 2, 3, 4):
             self.posicion_x = next_x
         if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-             messagebox.showinfo("Se acabo el juego")
+            MoverFantasmas =False
+            
+            
 
     def moverDerecha(self,tablero,xJugador, yJugador):
+        global MoverFantasmas
         next_x = self.posicion_x + 1
         if tablero[self.posicion_y][next_x] in (1, 2, 3, 4):
             self.posicion_x = next_x
         if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-            messagebox.showinfo("Se acabo el juego")
+            MoverFantasmas=False
+            
 
     def moverArriba(self,tablero,xJugador, yJugador):
+        global MoverFantasmas
         next_y = self.posicion_y - 1
         if tablero[next_y][self.posicion_x] in (1, 2, 3, 4):
            self.posicion_y = next_y
         if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-             messagebox.showinfo("Se acabo el juego")
+            MoverFantasmas=False
+            
 
     def moverAbajo(self,tablero,xJugador, yJugador):
+        global MoverFantasmas
         next_y = self.posicion_y + 1
         if tablero[next_y][self.posicion_x] in (1, 2, 3,4):
            self.posicion_y = next_y
         if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-             messagebox.showinfo("Se acabo el juego")
+            MoverFantasmas=False
+            
 
 
 #Inicializa Pygame y carga la música en la función play()
@@ -177,16 +189,17 @@ def ventana_inicio():
     def agarrar_nombre():
         global nombreJugadorActual
         global score
+        global Partida
         nombre = nombreJugadorActual
         print(nombre)
         try:
             with open('data.txt', 'a') as file:  # agrega al txt los datos
 
-                file.write(f'{score}-{nombre},')
+                file.write(f'{Partida.score}-{nombre},')
                 file.close()
         except:
             with open('data.txt', 'w') as file:  # crea el txt de no existir
-                file.write(f'{score}: {nombre},')
+                file.write(f'{Partida.score}: {nombre},')
 
 
     #Ventana JUEGO
@@ -203,7 +216,10 @@ def ventana_inicio():
         #Funcion para dibujar tablero de juego
         global Partida
         def show_score():
+            
+            pygame.draw.rect(ventana, negro, (0 , 600, 300, 100))
             score_text = font.render(f"Score: {Partida.score}", True, blanco)
+            
             ventana.blit(score_text, (10, 600))
         
         
@@ -264,30 +280,40 @@ def ventana_inicio():
 
         Jugador = PacMan(0, 0, 0)
         ListaFantasmas = []
-        for i in range (1,4):
+        for i in range (1):
             ListaFantasmas.append(Fantasma(rojo))
+            ListaFantasmas.append(Fantasma(naranja))
+            ListaFantasmas.append(Fantasma(rosado))
+            ListaFantasmas.append(Fantasma(celeste))
         Partida = Juego(tableroJuego,1,0, Jugador, ListaFantasmas)
 
         def mover(fantasma,velocidad):
             global MoverFantasmas
+            global Partida
             while MoverFantasmas:
-                time.sleep(velocidad)
-                #hacer un ramdon para determinar el movimiento
-                direccion = random.choice(["izquierda", "derecha", "arriba", "abajo"])
-                
-                if direccion == "izquierda":
-                    fantasma.moverIzquierda(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
-                elif direccion == "derecha":
-                    fantasma.moverDerecha(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
-                elif direccion == "arriba":
-                    fantasma.moverArriba(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
-                elif direccion == "abajo":
-                    fantasma.moverAbajo(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
-                
+                try:
+                    time.sleep(velocidad)
+                    direccion = random.choice(["izquierda", "derecha", "arriba", "abajo"])
+                    
+                    if direccion == "izquierda":
+                        fantasma.moverIzquierda(Partida.tablero,Partida.Jugador.x, Partida.Jugador.y)
+                    elif direccion == "derecha":
+                        fantasma.moverDerecha(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                    elif direccion == "arriba":
+                        fantasma.moverArriba(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                    elif direccion == "abajo":
+                        fantasma.moverAbajo(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                except Exception as e:
+                    # Maneja la excepción aquí, por ejemplo, imprime un mensaje de error
+                    print(f"Error en el hilo: {e}")
+            print("Se acabo el juego")
 
         for fantasma in Partida.Fantasmas:
             # Crea un objeto de hilo
-            hilo = threading.Thread(target=mover,args=(fantasma,1))
+            veloc= 0.5
+            if fantasma.color==rojo:
+                veloc=0.25
+            hilo = threading.Thread(target=mover,args=(fantasma,veloc))
 
             # Inicia la ejecución del hilo
             hilo.start()
@@ -297,8 +323,8 @@ def ventana_inicio():
         jugador_imagen = pygame.image.load("jugador.png") 
         jugador_imagen = pygame.transform.scale(jugador_imagen, (tamano_casilla, tamano_casilla))
 
-        fantasma_rojo = pygame.image.load("rojo.png") 
-        fantasma_rojo = pygame.transform.scale(fantasma_rojo, (tamano_casilla, tamano_casilla))
+       # fantasma_rojo = pygame.image.load("rojo.png") 
+        #fantasma_rojo = pygame.transform.scale(fantasma_rojo, (tamano_casilla, tamano_casilla))
             
         #Funcion para dibujar tablero de juego
         def dibujar_tablero():
@@ -310,30 +336,43 @@ def ventana_inicio():
                         x = columna * tamano_casilla + tamano_casilla // 2
                         y = fila * tamano_casilla + tamano_casilla // 2
                         radio = tamano_casilla // 4
+                        pygame.draw.rect(ventana, negro, (columna * tamano_casilla, fila * tamano_casilla, tamano_casilla, tamano_casilla))
                         pygame.draw.circle(ventana, amarillo, (x, y), radio)
                     elif Partida.tablero[fila][columna]==2:
                         x = columna * tamano_casilla + tamano_casilla // 2
                         y = fila * tamano_casilla + tamano_casilla // 2
                         radio = tamano_casilla // 2
+                        pygame.draw.rect(ventana, negro, (columna * tamano_casilla, fila * tamano_casilla, tamano_casilla, tamano_casilla))
                         pygame.draw.circle(ventana, blanco, (x, y), radio)
                     elif Partida.tablero[fila][columna]==3:
                         x = columna * tamano_casilla + tamano_casilla // 2
                         y = fila * tamano_casilla + tamano_casilla // 2
                         radio = tamano_casilla // 3
+                        pygame.draw.rect(ventana, negro, (columna * tamano_casilla, fila * tamano_casilla, tamano_casilla, tamano_casilla))
                         pygame.draw.circle(ventana, naranja, (x, y), radio)
                     elif Partida.tablero[fila][columna]==4:
                         pygame.draw.rect(ventana, negro, (columna * tamano_casilla, fila * tamano_casilla, tamano_casilla, tamano_casilla))
                     
                     
                 
-                jugador_rect = jugador_imagen.get_rect()
-                jugador_rect.topleft = (Jugador.x * tamano_casilla, Jugador.y * tamano_casilla)
-                ventana.blit(jugador_imagen, jugador_rect.topleft)
+            jugador_rect = jugador_imagen.get_rect()
+            jugador_rect.topleft = (Jugador.x * tamano_casilla, Jugador.y * tamano_casilla)
+            ventana.blit(jugador_imagen, jugador_rect.topleft)
 
-                fantasmaRojo = jugador_imagen.get_rect()
-                fantasmaRojo.topleft = (fantasma.posicion_x * tamano_casilla, fantasma.posicion_y * tamano_casilla)
-                ventana.blit(fantasma_rojo, fantasmaRojo.topleft)
-
+            for fantasmaR in Partida.Fantasmas:
+                fantasma_Aux = pygame.image.load("rojo.png")
+                if fantasmaR.color == rosado:
+                    fantasma_Aux = pygame.image.load("rosado.png")
+                elif fantasmaR.color == naranja:
+                    fantasma_Aux = pygame.image.load("naranja.png")
+                elif fantasmaR.color == celeste:
+                    fantasma_Aux = pygame.image.load("celeste.png")
+                    
+                fantasma_Aux = pygame.transform.scale(fantasma_Aux, (tamano_casilla, tamano_casilla))
+                fantasma = fantasma_Aux.get_rect()
+                fantasma.topleft = (fantasmaR.posicion_x * tamano_casilla, fantasmaR.posicion_y * tamano_casilla)
+                ventana.blit(fantasma_Aux, fantasma.topleft)    
+             
         def draw_button():
              # Alineado en la parte inferior
             pygame.draw.rect(ventana, blanco, (button_x, button_y, button_width, button_height))
@@ -353,10 +392,12 @@ def ventana_inicio():
                     if (button_x <= event.pos[0] <= button_x + button_width and button_y <= event.pos[1] <= button_y + button_height):
                         # Regresar a la Ventana1
                         pygame.quit()
-                        sys.exit()
+                        ventana_inicio()
+                        
+                        
 
                     # Regresar a la Ventana
-                
+                pygame.display.flip()
                 clock.tick(10)
                     # Regresar a la Ventana
             
@@ -368,53 +409,61 @@ def ventana_inicio():
                 if Partida.tablero[Jugador.y - 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
                     Partida.score+=2
-                    agarrar_nombre()
+                    
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
+
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 3:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4  
+                    Partida.score += 4
                 
                 Jugador.y -= 1
             if keys[pygame.K_DOWN] and Jugador.y < 39  and Partida.tablero[Jugador.y + 1][Jugador.x] != 0:
                 if Partida.tablero[Jugador.y + 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
                     Partida.score+=2
-                    agarrar_nombre()
+               
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
+
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 3:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
+                    Partida.score += 4
                     
                 Jugador.y += 1
             if keys[pygame.K_LEFT] and Jugador.x > 0 and Partida.tablero[Jugador.y][Jugador.x - 1] != 0:
                 if Partida.tablero[Jugador.y][Jugador.x - 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
                     Partida.score+=2
-                    agarrar_nombre()
+                    
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
+
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 3:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
+                    Partida.score += 4
                     
                 Jugador.x -= 1
             if keys[pygame.K_RIGHT] and Jugador.x < 35 and Partida.tablero[Jugador.y][Jugador.x + 1] != 0:
                 if Partida.tablero[Jugador.y][Jugador.x + 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
                     Partida.score+=2
-                    agarrar_nombre()
+                    
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
+
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 3:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
+                    Partida.score += 4
                     
                 Jugador.x += 1
-            ventana.fill(negro)
+           
             draw_button()
             
-            pygame.display.flip()
+            
 
                 # Controlar la velocidad de actualización
-            clock.tick(100)
+            clock.tick(5)
 
             show_score()
             nombre() 
