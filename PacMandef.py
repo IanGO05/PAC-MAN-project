@@ -392,9 +392,7 @@ def ventana_inicio():
                     if (button_x <= event.pos[0] <= button_x + button_width and button_y <= event.pos[1] <= button_y + button_height):
                         # Regresar a la Ventana1
                         pygame.quit()
-                        ventana_inicio()
-                        
-                        
+                        sys.exit()
 
                     # Regresar a la Ventana
                 pygame.display.flip()
@@ -412,10 +410,8 @@ def ventana_inicio():
                     
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
-
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 3:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4  
-                    Partida.score += 4
                 
                 Jugador.y -= 1
             if keys[pygame.K_DOWN] and Jugador.y < 39  and Partida.tablero[Jugador.y + 1][Jugador.x] != 0:
@@ -425,10 +421,8 @@ def ventana_inicio():
                
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
-
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 3:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
-                    Partida.score += 4
                     
                 Jugador.y += 1
             if keys[pygame.K_LEFT] and Jugador.x > 0 and Partida.tablero[Jugador.y][Jugador.x - 1] != 0:
@@ -438,10 +432,8 @@ def ventana_inicio():
                     
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
-
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 3:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
-                    Partida.score += 4
                     
                 Jugador.x -= 1
             if keys[pygame.K_RIGHT] and Jugador.x < 35 and Partida.tablero[Jugador.y][Jugador.x + 1] != 0:
@@ -451,10 +443,8 @@ def ventana_inicio():
                     
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
-
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 3:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
-                    Partida.score += 4
                     
                 Jugador.x += 1
            
