@@ -170,9 +170,19 @@ def ventana_inicio():
         if (str(entryNombre.get())!=""):
             entryNombre =str(entryNombre.get())
             vent.destroy()
-            Ventana_juego()
+            Ventana_juego(1)
         else:
             messagebox.showinfo("Advertencia", "Debe ingresar un nombre valido")
+
+    def iniciar_nivel2(vent):
+        global entryNombre
+        if (str(entryNombre.get())!=""):
+            entryNombre =str(entryNombre.get())
+            vent.destroy()
+            Ventana_juego(2)
+        else:
+            messagebox.showinfo("Advertencia", "Debe ingresar un nombre valido")
+    
 
     def ventana_nombre():
         global entryNombre
@@ -192,9 +202,13 @@ def ventana_inicio():
         entryNombre.pack()
         entryNombre.place(x=70, y=150)
         #boton aceptar para ir a la pantalla de juego
-        Aceptar_Boton= tkinter.Button(nombre, text= "Aceptar", command=lambda:iniciar(nombre), fg=("white"), bg=("coral"))
+        Aceptar_Boton= tkinter.Button(nombre, text= "Nivel 1", command=lambda:iniciar(nombre), fg=("white"), bg=("coral"))
         Aceptar_Boton.pack(pady=10)
-        Aceptar_Boton.place(x=150, y=200)
+        Aceptar_Boton.place(x=90, y=200)
+
+        Aceptar_Boton= tkinter.Button(nombre, text= "Nivel 2", command=lambda:iniciar_nivel2(nombre), fg=("white"), bg=("coral"))
+        Aceptar_Boton.pack(pady=10)
+        Aceptar_Boton.place(x=200, y=200)
     
     def agarrar_nombre():
         global nombreJugadorActual
@@ -213,7 +227,7 @@ def ventana_inicio():
 
 
     #Ventana JUEGO
-    def Ventana_juego():
+    def Ventana_juego(nivel):
         global ventana_alto
         global ventana_ancho
         pygame.init()
@@ -290,11 +304,14 @@ def ventana_inicio():
 
         Jugador = PacMan(0, 0, 0)
         ListaFantasmas = []
-        for i in range (1):
+        if nivel == 2:
             ListaFantasmas.append(Fantasma(rojo))
             ListaFantasmas.append(Fantasma(naranja))
-            ListaFantasmas.append(Fantasma(rosado))
-            ListaFantasmas.append(Fantasma(celeste))
+        ListaFantasmas.append(Fantasma(rojo))
+        ListaFantasmas.append(Fantasma(naranja))
+        ListaFantasmas.append(Fantasma(rosado))
+        ListaFantasmas.append(Fantasma(celeste))
+        Partida = Juego(tableroJuego,1,0, Jugador, ListaFantasmas)
         Partida = Juego(tableroJuego,1,0, Jugador, ListaFantasmas)
 
         def mover(fantasma,velocidad):
@@ -323,7 +340,7 @@ def ventana_inicio():
                     contadorFantasmasVivos += 1
 
             if MoverFantasmas == False and contadorFantasmasVivos == 0:
-                pygame.quit()
+                
                 
                 print("Se acabo el juego")
                            
@@ -419,12 +436,14 @@ def ventana_inicio():
                     sys.exit()
                 if all(all(valor !=1 for valor in fila) for fila in Partida.tablero):     
                     fuente = pygame.font.Font(None, 36)
-                    mensaje = fuente.render("¡Juego Ganado!", True, negro)
+                    mensaje = fuente.render("¡Juego Ganado!", True, blanco)
                     ventana.blit(mensaje, (ventana_ancho // 2 - mensaje.get_width() // 2, ventana_alto // 2 - mensaje.get_height() // 2))
                     pygame.display.flip()
                     time.sleep(2)
                     pygame.quit()
                     ventana1.deiconify()
+
+                    
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if (button_x <= event.pos[0] <= button_x + button_width and button_y <= event.pos[1] <= button_y + button_height):
@@ -484,9 +503,10 @@ def ventana_inicio():
                 
                 Jugador.y -= 1
                 for FantasmaAux in Partida.Fantasmas:
-                    if FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y - 1 and Jugador.capsula == False :
-                       MoverFantasmas=False
-                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y - 1 and Jugador.capsula == True :
+                    if FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y  and Jugador.capsula == False :
+                        MoverFantasmas=False
+                        
+                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y  and Jugador.capsula == True :
                        FantasmaAux.estado=False
             if keys[pygame.K_DOWN] and Jugador.y < 39  and Partida.tablero[Jugador.y + 1][Jugador.x] != 0:
                 
@@ -521,9 +541,9 @@ def ventana_inicio():
                 Jugador.y += 1
 
                 for FantasmaAux in Partida.Fantasmas:
-                    if FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y + 1 and Jugador.capsula == False :
+                    if FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y  and Jugador.capsula == False :
                        MoverFantasmas=False
-                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y + 1 and Jugador.capsula == True :
+                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y  and Jugador.capsula == True :
                        FantasmaAux.estado=False
             if keys[pygame.K_LEFT] and Jugador.x > 0 and Partida.tablero[Jugador.y][Jugador.x - 1] != 0:
                 
@@ -558,9 +578,9 @@ def ventana_inicio():
                     
                 Jugador.x -= 1
                 for FantasmaAux in Partida.Fantasmas:
-                    if FantasmaAux.posicion_x == Jugador.x - 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == False :
+                    if FantasmaAux.posicion_x == Jugador.x  and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == False :
                        MoverFantasmas=False
-                    elif FantasmaAux.posicion_x == Jugador.x - 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
+                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
                        FantasmaAux.estado=False
 
             if keys[pygame.K_RIGHT] and Jugador.x < 35 and Partida.tablero[Jugador.y][Jugador.x + 1] != 0:
@@ -593,9 +613,9 @@ def ventana_inicio():
                     
                 Jugador.x += 1
                 for FantasmaAux in Partida.Fantasmas:
-                    if FantasmaAux.posicion_x == Jugador.x + 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == False :
+                    if FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == False :
                        MoverFantasmas=False
-                    elif FantasmaAux.posicion_x == Jugador.x + 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
+                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
                        FantasmaAux.estado=False
 
             draw_button()
