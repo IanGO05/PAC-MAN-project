@@ -65,10 +65,8 @@ button_x = ventana_ancho - button_width - 10  # Alineado a la derecha
 button_y = ventana_alto - button_height - 10
 button_ins_y = ventana_alto - button_height - 55
 
-
-
 class Juego:
-    def __init__(self, tablero,  nivel, score, Jugador, Fantasmas ):
+    def __init__(self, tablero, nivel, score, Jugador, Fantasmas ):
         self.tablero = tablero
         self.nivel = nivel
         self.score = score
@@ -85,8 +83,6 @@ class PacMan:
         self.y = 0
         self.capsula = False
 
-    
-
 class Fantasma:
     def __init__(self, color):
         self.estado = True  
@@ -95,7 +91,6 @@ class Fantasma:
         self.anterior = 4 
         self.color = color 
         self.capsula = capsula
-
 
     def moverIzquierda(self,tablero,xJugador, yJugador, EstadoCapsula):
         global MoverFantasmas
@@ -107,7 +102,6 @@ class Fantasma:
             elif((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == True ):    
                 self.estado=False
                 ListaFantasmas.append(Fantasma(rojo))
-                
 
     def moverDerecha(self,tablero,xJugador, yJugador, EstadoCapsula):
         global MoverFantasmas
@@ -167,7 +161,7 @@ def ventana_inicio():
     ventana1.resizable(height=False, width=False)
     
     #Titulo Ventana Principal
-    tituloPrincipal = tk.Label(ventana1, text="ROBOTS", font=("Courier New", 12, "bold"), background="grey", fg="white")
+    tituloPrincipal = tk.Label(ventana1, text="PAC-MAN", font=("Courier New", 12, "bold"), background="grey", fg="white")
     tituloPrincipal.place(x=1400, y=25)
     def iniciar(vent):
         global entryNombre
@@ -187,32 +181,31 @@ def ventana_inicio():
         else:
             messagebox.showinfo("Advertencia", "Debe ingresar un nombre valido")
     
-
     def ventana_nombre():
         global entryNombre
         ventana1.withdraw()
         nombre = Toplevel()
         nombre.title("Nombre jugador") #nombre de la ventana
         nombre.geometry("400x300") # dimensiones de la ventana
-        nombre.configure(background="CadetBlue1") #color del fondo 
+        nombre.configure(background="black") #color del fondo 
         #canvas
-        canvasC3 = tkinter.Canvas(nombre, width=300, height=200, borderwidth=0, highlightthickness=0, background="pink")
+        canvasC3 = tkinter.Canvas(nombre, width=300, height=200, borderwidth=0, highlightthickness=0, background="black")
         canvasC3.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
         #titulo para identicar que tiene que hacer el jugador 
-        titulo4= tkinter.Label(canvasC3, text="Ingrese su nombre:", font=("Verdana", 12), background="pink", fg="black")
-        titulo4.place(x=50, y=60)
+        titulo4= tkinter.Label(canvasC3, text="Ingrese su nombre:", font=("Courier New", 12), background="black", fg="yellow")
+        titulo4.place(x=50, y=20)
         # barra donde se escribe el nombre
         entryNombre= tkinter.Entry(nombre, width=40)
         entryNombre.pack()
         entryNombre.place(x=70, y=150)
         #boton aceptar para ir a la pantalla de juego
-        Aceptar_Boton= tkinter.Button(nombre, text= "Nivel 1", command=lambda:iniciar(nombre), fg=("white"), bg=("coral"))
+        Aceptar_Boton= tkinter.Button(nombre, text= "Nivel 1", command=lambda:iniciar(nombre), fg=("yellow"), bg=("black"))
         Aceptar_Boton.pack(pady=10)
-        Aceptar_Boton.place(x=90, y=200)
+        Aceptar_Boton.place(x=100, y=200)
 
-        Aceptar_Boton= tkinter.Button(nombre, text= "Nivel 2", command=lambda:iniciar_nivel2(nombre), fg=("white"), bg=("coral"))
+        Aceptar_Boton= tkinter.Button(nombre, text= "Nivel 2", command=lambda:iniciar_nivel2(nombre), fg=("yellow"), bg=("black"))
         Aceptar_Boton.pack(pady=10)
-        Aceptar_Boton.place(x=200, y=200)
+        Aceptar_Boton.place(x=230, y=200)
     
     def agarrar_nombre():
         global nombreJugadorActual
@@ -229,15 +222,95 @@ def ventana_inicio():
                 file.write(f'{Partida.score}: {nombre},')
 
 
+    #Ventana modo inspector
+    def abrirventana_inspector():
+        ventana1.withdraw()
+        ventana8 = Toplevel()
+        ventana8.title("Ventana Inspector")
+        ventana8.geometry("800x480")
+        ventana8.configure(background="black")
+        canvasC8 = tk.Canvas(ventana8, width=800, height=680, borderwidth=0, highlightthickness=0, background="black")
+        canvasC8.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        titulo= tk.Label(canvasC8, text="Inspeccion", fg=("Yellow"), font=("Courier New", 12, "bold"), bg=("black"))
+        titulo.place(x=308, y=110)
+        ventana8.resizable(height=False, width=False)
+        ventana8.update()
+
+        texto= tk.Label(canvasC8, text="[4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]"
+                "\n[2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1]"
+                "\n[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2]"
+                                               
+                                        ,font=("Courier New", 5, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+        texto.place(x=50, y=180)
+
+
+
+        #Botón de back Ventana Inspector
+        def back():
+            ventana8.destroy()
+  
+        botonBack = tk.Button(ventana8, text="Back", command= back, font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), width=8)
+        botonBack.pack()
+        botonBack.place(x=650, y=420)
+
+
+
+
     #Ventana JUEGO
     def Ventana_juego(nivel):
-        global ventana_alto
-        global ventana_ancho
         pygame.init()
         ventana = pygame.display.set_mode((ventana_ancho, ventana_alto))
         pygame.display.set_caption("PacMan")
         font = pygame.font.Font(None, 36)
         clock = pygame.time.Clock()
+        
+        # Crear otra ventana de Tkinter
+        ventana_inspector = Toplevel()
+        ventana_inspector.title("Modo Inspector")
+        # Establecer la geometría con las coordenadas de posición
+        ventana_inspector.geometry(f"150x55+{252}+{2}")
+        ventana_inspector.configure(background="black")
+        ventana_inspector.resizable(height=False, width=False)
+        
+        boton7 = tk.Button(ventana_inspector, text="Inspector", command=abrirventana_inspector,font=("Courier New", 16, "bold"), fg=("yellow"), bg=("black"))
+        boton7.pack()
+        boton7.place(x=10, y=10)
 
         
         #Funcion para dibujar tablero de juego
@@ -245,17 +318,16 @@ def ventana_inicio():
         def show_score():
             
             pygame.draw.rect(ventana, negro, (0 , 600, 300, 100))
-            score_text = font.render(f"Score: {Partida.score}", True, blanco)
+            score_text = font.render(f"Score: {Partida.score}", True, amarillo)
             
             ventana.blit(score_text, (10, 600))
-        
         
         def nombre():
             global nombreJugadorActual
             if(entryNombre != ""):
                 NombreJugador = str(entryNombre)
                 nombreJugadorActual = str(entryNombre)
-            juganombre = font.render(f"Jugador@: {NombreJugador}", True, blanco)
+            juganombre = font.render(f"Jugador: {NombreJugador}", True, amarillo)
             ventana.blit(juganombre, (10, 620))
 
        
@@ -416,21 +488,15 @@ def ventana_inicio():
                 fantasma.topleft = (fantasmaR.posicion_x * tamano_casilla, fantasmaR.posicion_y * tamano_casilla)
                 ventana.blit(fantasma_Aux, fantasma.topleft)    
              
-        def draw_button():
+        # Funcion para boton regresar del juego
+        def boton_regresar():
              # Alineado en la parte inferior
-            pygame.draw.rect(ventana, blanco, (button_x, button_y, button_width, button_height))
-            font = pygame.font.Font(None, 36)
-            button_text = font.render("Regresar", True, negro)
+            pygame.draw.rect(ventana, negro, (button_x, button_y, button_width, button_height))
+            font = pygame.font.Font(None, 25)
+            button_text = font.render("Regresar", True, amarillo)
             text_rect = button_text.get_rect(center=(button_x + button_width // 2, button_y + button_height // 2))
             ventana.blit(button_text, text_rect.topleft)
 
-        def botón_inspector():
-             # Alineado en la parte inferior
-            pygame.draw.rect(ventana, blanco, (button_x, button_ins_y, button_width, button_height))
-            font = pygame.font.Font(None, 26)
-            button_text = font.render("Inspector", True, negro)
-            text_rect = button_text.get_rect(center=(button_x + button_width // 2, button_ins_y + button_height // 2))
-            ventana.blit(button_text, text_rect.topleft)
 
         while True:
             for event in pygame.event.get():
@@ -446,32 +512,16 @@ def ventana_inicio():
                     pygame.quit()
                     ventana1.deiconify()
 
-                    
-
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if (button_x <= event.pos[0] <= button_x + button_width and button_y <= event.pos[1] <= button_y + button_height):
                         # Regresar a la Ventana1
                         pygame.quit()
-                        ventana1.deiconify()   
-                    #Boton inspector
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if (button_x <= event.pos[0] <= button_x + button_width and button_ins_y <= event.pos[1] <= button_ins_y + button_height):
-                        # Regresar a la Ventana1
-                        pygame.quit()
                         ventana1.deiconify()
-                        #sys.exit()
-                    
-                    
-               
 
-                    # Regresar a la Ventana
+                # Regresar a la Ventana
                 pygame.display.flip()
                 clock.tick(10)
-                    # Regresar a la Ventana
 
-                
-            
-            
                 
                 #Control de movimiento de Pac-Man
                 keys = pygame.key.get_pressed()
@@ -487,7 +537,7 @@ def ventana_inicio():
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
                     Jugador.capsula = True  # Suponiendo que hay una variable en la clase Jugador para representar si la cápsula está activa
 
-                         # Definir una función para cambiar la cápsula a False después de 10 segundos
+                    #Definir una función para cambiar la cápsula a False después de 10 segundos
                     def desactivar_capsula():
                         time.sleep(10)
                         Jugador.capsula = False
@@ -561,7 +611,7 @@ def ventana_inicio():
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
                     Jugador.capsula = True  # Suponiendo que hay una variable en la clase Jugador para representar si la cápsula está activa
 
-                         # Definir una función para cambiar la cápsula a False después de 10 segundos
+                    # Definir una función para cambiar la cápsula a False después de 10 segundos
                     def desactivar_capsula():
                         time.sleep(10)
                         Jugador.capsula = False
@@ -625,11 +675,9 @@ def ventana_inicio():
                        FantasmaAux.estado=False
                        ListaFantasmas.append(Fantasma(rojo))
 
-            draw_button()
-            botón_inspector()
+            boton_regresar()
             
-            
-
+        
                 # Controlar la velocidad de actualización
             clock.tick(5)
 
@@ -639,16 +687,21 @@ def ventana_inicio():
             pygame.display.update()
 
 
+
+            #ESTO ES DIOS, solucino el error del boton y pausa el juego cuando abrimos la ventana inspector
+            ventana_inspector.update()
+        
+
     
     #Ventana de mejores puntajes
     def abrirventana3():
         menuRank = Tk()
         menuRank.title('Salon de la fama')
-        fondo = Canvas(menuRank, width=800, height=500, border=0, bg='pink')
+        fondo = Canvas(menuRank, width=800, height=500, border=0, bg='black')
         fondo.pack()
-        
+
            
-           # Regresar a la ventana principal
+        # Regresar a la ventana principal
         def regresa():
             menuRank.destroy()
             ventana1.deiconify()
@@ -663,15 +716,15 @@ def ventana_inicio():
             print(read)
             top= natsorted(read,reverse=True)
             print(top)
-            puesto1 = Label(fondo,text=f'1) {top[0]}',width=15, height=1,font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto1 = Label(fondo,text=f'1) {top[0]}',width=15, height=1,font=('Courier New', 21, 'italic', 'bold'),bg='black',fg='yellow')
             puesto1.place(x=320, y=25)
-            puesto2 = Label(fondo,text=f'2) {top[1]}',width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto2 = Label(fondo,text=f'2) {top[1]}',width=15, height=2, font=('Courier New', 21, 'italic', 'bold'),bg='black',fg='yellow')
             puesto2.place(x=320, y=100)
-            puesto3 = Label(fondo,text=f'3) {top[2]}', width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto3 = Label(fondo,text=f'3) {top[2]}', width=15, height=2, font=('Courier New', 21, 'italic', 'bold'),bg='black',fg='yellow')
             puesto3.place(x=320, y=200)
-            puesto4 = Label(fondo,text=f'4) {top[3]}', width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto4 = Label(fondo,text=f'4) {top[3]}', width=15, height=2, font=('Courier New', 21, 'italic', 'bold'),bg='black',fg='yellow')
             puesto4.place(x=320, y=300)
-            puesto5 = Label(fondo,text=f'5) {top[4]}', width=15, height=2, font=('Arial Black', 21, 'italic', 'bold'),bg='pink',fg='black')
+            puesto5 = Label(fondo,text=f'5) {top[4]}', width=15, height=2, font=('Courier New', 21, 'italic', 'bold'),bg='black',fg='yellow')
             puesto5.place(x=320, y=400)
 
         except:
@@ -690,17 +743,18 @@ def ventana_inicio():
         ventana4.configure(background="black")
         canvasC4 = tk.Canvas(ventana4, width=800, height=680, borderwidth=0, highlightthickness=0, background="black")
         canvasC4.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-        titulo= tk.Label(canvasC4, text="Sonido", font=("Courier New", 16, "bold"), background="black", fg="white")
+        titulo= tk.Label(canvasC4, text="Sonido", font=("Courier New", 16, "bold"), background="black", fg="yellow")
         titulo.place(x=330 ,y=170)
         ventana4.resizable(height=False, width=False)
+        
 
         # Botón de play
-        botonP = Button(ventana4, text="Play", font=("Courier New", 12, "bold"), command=play, fg=("white"), bg=("black"), width=8)
+        botonP = Button(ventana4, text="Play", font=("Courier New", 12, "bold"), command=play, fg=("yellow"), bg=("black"), width=8)
         botonP.pack()
         botonP.place(x=500, y=300)
         
         # Botón de stop music
-        botonBack = tk.Button(ventana4, text="Stop Music", font=("Courier New", 12, "bold"), command=stop_music, fg=("white"), bg=("black"), width=12)
+        botonBack = tk.Button(ventana4, text="Stop Music", font=("Courier New", 12, "bold"), command=stop_music, fg=("yellow"), bg=("black"), width=12)
         botonBack.pack()
         botonBack.place(x=600, y=300)
 
@@ -709,7 +763,7 @@ def ventana_inicio():
             ventana4.destroy()
             ventana1.deiconify()
   
-        botonBack = tk.Button(ventana4, text="Back", command= back, font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), width=8)
+        botonBack = tk.Button(ventana4, text="Back", command= back, font=("Courier New", 12, "bold"), fg=("yellow"), bg=("black"), width=8)
         botonBack.pack()
         botonBack.place(x=650, y=420)
 
@@ -726,7 +780,7 @@ def ventana_inicio():
         canvasC4 = tk.Canvas(ventana5, width=800, height=680, borderwidth=0, highlightthickness=0, background="black")
         canvasC4.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
     
-        titulo= tk.Label(canvasC4, text="Controles", font=("Courier New", 15, "bold"), fg=("white"), bg=("black"))
+        titulo= tk.Label(canvasC4, text="Controles", font=("Courier New", 15, "bold"), fg=("yellow"), bg=("black"))
         titulo.place(x=310, y=120)
         ventana5.resizable(height=False, width=False)
 
@@ -735,10 +789,10 @@ def ventana_inicio():
                                         "\nMover hacia la derecha: D"
                                         "\nMover hacia la izquierda: A"
                                         
-                                ,font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+                                ,font=("Courier New", 12, "bold"), fg=("yellow"), bg=("black"), justify=tk.LEFT)
         texto.place(x=50, y=180)
 
-        image= Image.open("Teclado.png")
+        image= Image.open("Teclado1.png")
         image = image.resize((500,150))
         img = ImageTk.PhotoImage(image)
         yo_img = Label(canvasC4, image=img)
@@ -753,7 +807,7 @@ def ventana_inicio():
             ventana5.destroy()
             ventana1.deiconify()
 
-        botonBack = tk.Button(ventana5, text="Back", command= back, fg=("white"), font=("Courier New", 12, "bold"), bg=("black"), width=8)
+        botonBack = tk.Button(ventana5, text="Back", command= back, fg=("yellow"), font=("Courier New", 12, "bold"), bg=("black"), width=8)
         botonBack.pack()
         botonBack.place(x=650, y=420)
 
@@ -774,6 +828,7 @@ def ventana_inicio():
         titulo.place(x=308, y=110)
         ventana6.resizable(height=False, width=False)
     
+    
     #Botón de back Ventana "Acerca de"
         def back():
             ventana6.destroy()
@@ -786,18 +841,17 @@ def ventana_inicio():
         abrirventana6.mainloop()
 
     
-    
     #Botones Principales VENTANA 1
-    boton1 = tk.Button(ventana1, text="Jugar", command=ventana_nombre,font=("Courier New", 16, "bold"), fg=("white"), bg=("black"))
-    boton1.place(x=240, y=60)
-    boton2 = tk.Button(ventana1, text="Configuración",command=abrirventana4, font=("Courier New", 16, "bold"), fg=("white"), bg=("black"))
-    boton2.place(x=185, y=217)
-    boton3 = tk.Button(ventana1, text="Ayuda", command=abrirventana5, font=("Courier New", 14, "bold"), fg=("white"), bg=("black"))
-    boton3.place(x=75, y=420)
-    boton4 = tk.Button(ventana1, text="Mejores Puntajes",command=abrirventana3, font=("Courier New", 16, "bold"), fg=("white"), bg=("black"))
-    boton4.place(x=170, y=140)
-    boton5 = tk.Button(ventana1, text="Acerca de", command=abrirventana6, font=("Courier New", 14, "bold"), fg=("white"), bg=("black"))
-    boton5.place(x=350, y=420)
+    boton1 = tk.Button(ventana1, text="Jugar", command=ventana_nombre,font=("Courier New", 16, "bold"), fg=("yellow"), bg=("black"))
+    boton1.place(x=353, y=50)
+    boton2 = tk.Button(ventana1, text="Configuración",command=abrirventana4, font=("Courier New", 16, "bold"), fg=("yellow"), bg=("black"))
+    boton2.place(x=300, y=420)
+    boton3 = tk.Button(ventana1, text="Ayuda", command=abrirventana5, font=("Courier New", 14, "bold"), fg=("yellow"), bg=("black"))
+    boton3.place(x=30, y=420)
+    boton4 = tk.Button(ventana1, text="Mejores Puntajes",command=abrirventana3, font=("Courier New", 16, "bold"), fg=("yellow"), bg=("black"))
+    boton4.place(x=280, y=110)
+    boton5 = tk.Button(ventana1, text="Acerca de", command=abrirventana6, font=("Courier New", 14, "bold"), fg=("yellow"), bg=("black"))
+    boton5.place(x=650, y=420)
     
     ventana1.mainloop() 
 ventana_inicio()
