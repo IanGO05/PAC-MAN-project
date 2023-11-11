@@ -63,6 +63,7 @@ button_width = 100
 button_height = 40
 button_x = ventana_ancho - button_width - 10  # Alineado a la derecha
 button_y = ventana_alto - button_height - 10
+button_ins_y = ventana_alto - button_height - 55
 
 
 
@@ -82,6 +83,9 @@ class PacMan:
         self.velocidad = velocidad
         self.x = 0 
         self.y = 0
+        self.capsula = False
+
+    
 
 class Fantasma:
     def __init__(self, color):
@@ -90,44 +94,50 @@ class Fantasma:
         self.posicion_y = 20 
         self.anterior = 4 
         self.color = color 
+        self.capsula = capsula
 
-    def moverIzquierda(self,tablero,xJugador, yJugador):
+
+    def moverIzquierda(self,tablero,xJugador, yJugador, EstadoCapsula):
         global MoverFantasmas
         next_x = self.posicion_x - 1
         if tablero[self.posicion_y][next_x] in (1, 2, 3, 4):
             self.posicion_x = next_x
-        if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-            MoverFantasmas =False
-            
-            
+            if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == False ):
+                MoverFantasmas =False
+            elif((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == True ):    
+                self.estado=False
+                
 
-    def moverDerecha(self,tablero,xJugador, yJugador):
+    def moverDerecha(self,tablero,xJugador, yJugador, EstadoCapsula):
         global MoverFantasmas
         next_x = self.posicion_x + 1
         if tablero[self.posicion_y][next_x] in (1, 2, 3, 4):
             self.posicion_x = next_x
-        if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-            MoverFantasmas=False
-            
+            if((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == False ):
+                MoverFantasmas=False
+            elif((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == True ):
+                self.estado=False
 
-    def moverArriba(self,tablero,xJugador, yJugador):
+    def moverArriba(self,tablero,xJugador, yJugador, EstadoCapsula):
         global MoverFantasmas
         next_y = self.posicion_y - 1
         if tablero[next_y][self.posicion_x] in (1, 2, 3, 4):
-           self.posicion_y = next_y
-        if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-            MoverFantasmas=False
-            
+            self.posicion_y = next_y
+            if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == False ):
+                MoverFantasmas=False
+            elif((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == True ):    
+                self.estado=False
 
-    def moverAbajo(self,tablero,xJugador, yJugador):
+
+    def moverAbajo(self,tablero,xJugador, yJugador, EstadoCapsula):
         global MoverFantasmas
         next_y = self.posicion_y + 1
         if tablero[next_y][self.posicion_x] in (1, 2, 3,4):
-           self.posicion_y = next_y
-        if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador ):
-            MoverFantasmas=False
-            
-
+            self.posicion_y = next_y
+            if((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador and EstadoCapsula == False):
+                MoverFantasmas=False
+            elif((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador and EstadoCapsula == True):
+                self.estado=False
 
 #Inicializa Pygame y carga la música en la función play()
 pygame.mixer.init()
@@ -249,15 +259,15 @@ def ventana_inicio():
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
@@ -290,23 +300,34 @@ def ventana_inicio():
         def mover(fantasma,velocidad):
             global MoverFantasmas
             global Partida
-            while MoverFantasmas:
+            while MoverFantasmas and fantasma.estado:
                 try:
                     time.sleep(velocidad)
                     direccion = random.choice(["izquierda", "derecha", "arriba", "abajo"])
                     
                     if direccion == "izquierda":
-                        fantasma.moverIzquierda(Partida.tablero,Partida.Jugador.x, Partida.Jugador.y)
+                        fantasma.moverIzquierda(Partida.tablero,Partida.Jugador.x, Partida.Jugador.y, Partida.Jugador.capsula)
                     elif direccion == "derecha":
-                        fantasma.moverDerecha(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                        fantasma.moverDerecha(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y, Partida.Jugador.capsula)
                     elif direccion == "arriba":
-                        fantasma.moverArriba(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                        fantasma.moverArriba(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y, Partida.Jugador.capsula)
                     elif direccion == "abajo":
-                        fantasma.moverAbajo(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y)
+                        fantasma.moverAbajo(Partida.tablero, Partida.Jugador.x, Partida.Jugador.y, Partida.Jugador.capsula)
                 except Exception as e:
                     # Maneja la excepción aquí, por ejemplo, imprime un mensaje de error
                     print(f"Error en el hilo: {e}")
-            print("Se acabo el juego")
+            fantasma.estado = False
+            contadorFantasmasVivos = 0
+            for FantasmaAux in Partida.Fantasmas:
+                if FantasmaAux.estado:
+                    contadorFantasmasVivos += 1
+
+            if MoverFantasmas == False and contadorFantasmasVivos == 0:
+                
+                print("Se acabo el juego")
+                           
+                #ventana1.deiconify()
+                
 
         for fantasma in Partida.Fantasmas:
             # Crea un objeto de hilo
@@ -323,8 +344,7 @@ def ventana_inicio():
         jugador_imagen = pygame.image.load("jugador.png") 
         jugador_imagen = pygame.transform.scale(jugador_imagen, (tamano_casilla, tamano_casilla))
 
-       # fantasma_rojo = pygame.image.load("rojo.png") 
-        #fantasma_rojo = pygame.transform.scale(fantasma_rojo, (tamano_casilla, tamano_casilla))
+       
             
         #Funcion para dibujar tablero de juego
         def dibujar_tablero():
@@ -367,6 +387,8 @@ def ventana_inicio():
                     fantasma_Aux = pygame.image.load("naranja.png")
                 elif fantasmaR.color == celeste:
                     fantasma_Aux = pygame.image.load("celeste.png")
+                elif fantasmaR.color == blanco:
+                    fantasma_Aux = pygame.image.load("blanco.png")
                     
                 fantasma_Aux = pygame.transform.scale(fantasma_Aux, (tamano_casilla, tamano_casilla))
                 fantasma = fantasma_Aux.get_rect()
@@ -381,74 +403,193 @@ def ventana_inicio():
             text_rect = button_text.get_rect(center=(button_x + button_width // 2, button_y + button_height // 2))
             ventana.blit(button_text, text_rect.topleft)
 
+        def botón_inspector():
+             # Alineado en la parte inferior
+            pygame.draw.rect(ventana, blanco, (button_x, button_ins_y, button_width, button_height))
+            font = pygame.font.Font(None, 26)
+            button_text = font.render("Inspector", True, negro)
+            text_rect = button_text.get_rect(center=(button_x + button_width // 2, button_ins_y + button_height // 2))
+            ventana.blit(button_text, text_rect.topleft)
+
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                     
+                    #Boton inspector
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if (button_x <= event.pos[0] <= button_x + button_width and button_ins_y <= event.pos[1] <= button_ins_y + button_height):
+                        # Regresar a la Ventana1
+                        pygame.quit()
+                        ventana1.deiconify()
+                        #sys.exit()
+                    
                     
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if (button_x <= event.pos[0] <= button_x + button_width and button_y <= event.pos[1] <= button_y + button_height):
                         # Regresar a la Ventana1
                         pygame.quit()
-                        sys.exit()
+                        ventana1.deiconify()
 
                     # Regresar a la Ventana
                 pygame.display.flip()
                 clock.tick(10)
                     # Regresar a la Ventana
+
+                
             
             
                 
                 #Control de movimiento de Pac-Man
                 keys = pygame.key.get_pressed()
+            global MoverFantasmas
             if keys[pygame.K_UP] and Jugador.y > 0 and Partida.tablero[Jugador.y - 1][Jugador.x] != 0:
+                
                 if Partida.tablero[Jugador.y - 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
                     Partida.score+=2
+                    agarrar_nombre()
                     
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y - 1][Jugador.x] = 4
+                    Jugador.capsula = True  # Suponiendo que hay una variable en la clase Jugador para representar si la cápsula está activa
+
+                         # Definir una función para cambiar la cápsula a False después de 10 segundos
+                    def desactivar_capsula():
+                        time.sleep(20)
+                        Jugador.capsula = False
+
+                    # Iniciar un hilo para ejecutar la función desactivar_capsula
+                    hilo_capsula = Thread(target=desactivar_capsula)
+                    hilo_capsula.start()
+                    for fantasma in ListaFantasmas:
+                        if fantasma.capsula:
+                            fantasma.capsula = False
+
                 elif Partida.tablero[Jugador.y - 1][Jugador.x] == 3:
-                    Partida.tablero[Jugador.y - 1][Jugador.x] = 4  
+                    Partida.tablero[Jugador.y - 1][Jugador.x] = 4 
+                    Partida.score+=4 
+                    agarrar_nombre()
                 
                 Jugador.y -= 1
+                for FantasmaAux in Partida.Fantasmas:
+                    if FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y - 1 and Jugador.capsula == False :
+                       MoverFantasmas=False
+                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y - 1 and Jugador.capsula == True :
+                       FantasmaAux.estado=False
             if keys[pygame.K_DOWN] and Jugador.y < 39  and Partida.tablero[Jugador.y + 1][Jugador.x] != 0:
+                
                 if Partida.tablero[Jugador.y + 1][Jugador.x] == 1:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
                     Partida.score+=2
+                    agarrar_nombre()
                
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 2:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
+                    Jugador.capsula = True  # Suponiendo que hay una variable en la clase Jugador para representar si la cápsula está activa
+
+                         # Definir una función para cambiar la cápsula a False después de 10 segundos
+                    def desactivar_capsula():
+                        time.sleep(20)
+                        Jugador.capsula = False
+
+                    # Iniciar un hilo para ejecutar la función desactivar_capsula
+                    hilo_capsula = Thread(target=desactivar_capsula)
+                    hilo_capsula.start()
+                    for fantasma in ListaFantasmas:
+                        if fantasma.capsula:
+                            fantasma.capsula = False
+                    #Setear el capsula del jugador en true
+                    #e iniciamos un hilo sleep 10 segundos y cambia otra vez la capsula a false
+
                 elif Partida.tablero[Jugador.y + 1][Jugador.x] == 3:
                     Partida.tablero[Jugador.y + 1][Jugador.x] = 4
+                    Partida.score+=4
+                    agarrar_nombre()
                     
                 Jugador.y += 1
+
+                for FantasmaAux in Partida.Fantasmas:
+                    if FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y + 1 and Jugador.capsula == False :
+                       MoverFantasmas=False
+                    elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y + 1 and Jugador.capsula == True :
+                       FantasmaAux.estado=False
             if keys[pygame.K_LEFT] and Jugador.x > 0 and Partida.tablero[Jugador.y][Jugador.x - 1] != 0:
+                
                 if Partida.tablero[Jugador.y][Jugador.x - 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
                     Partida.score+=2
+                    agarrar_nombre()
                     
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
+                    Jugador.capsula = True  # Suponiendo que hay una variable en la clase Jugador para representar si la cápsula está activa
+
+                         # Definir una función para cambiar la cápsula a False después de 10 segundos
+                    def desactivar_capsula():
+                        time.sleep(20)
+                        Jugador.capsula = False
+
+                    # Iniciar un hilo para ejecutar la función desactivar_capsula
+                    hilo_capsula = Thread(target=desactivar_capsula)
+                    hilo_capsula.start()
+                    for fantasma in ListaFantasmas:
+                        if fantasma.capsula:
+                            fantasma.capsula = False
+                    #Setear el capsula del jugador en true
+                    #e iniciamos un hilo sleep 10 segundos y cambia otra vez la capsula a false
+                    
+
                 elif Partida.tablero[Jugador.y][Jugador.x - 1] == 3:
                     Partida.tablero[Jugador.y][Jugador.x - 1] = 4
+                    Partida.score+=4
+                    agarrar_nombre()
                     
                 Jugador.x -= 1
+                for FantasmaAux in Partida.Fantasmas:
+                    if FantasmaAux.posicion_x == Jugador.x - 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == False :
+                       MoverFantasmas=False
+                    elif FantasmaAux.posicion_x == Jugador.x - 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
+                       FantasmaAux.estado=False
+
             if keys[pygame.K_RIGHT] and Jugador.x < 35 and Partida.tablero[Jugador.y][Jugador.x + 1] != 0:
+                
                 if Partida.tablero[Jugador.y][Jugador.x + 1] == 1:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
                     Partida.score+=2
                     
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 2:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
+                    Jugador.capsula = True  # Suponiendo que hay una variable en la clase Jugador para representar si la cápsula está activa
+
+                         # Definir una función para cambiar la cápsula a False después de 10 segundos
+                    def desactivar_capsula():
+                        time.sleep(20)
+                        Jugador.capsula = False
+
+                    # Iniciar un hilo para ejecutar la función desactivar_capsula
+                    hilo_capsula = Thread(target=desactivar_capsula)
+                    hilo_capsula.start()
+                    for fantasma in ListaFantasmas:
+                        if fantasma.capsula:
+                            fantasma.capsula = False
+                    #Setear el capsula del jugador en true
+                    #e iniciamos un hilo sleep 10 segundos y cambia otra vez la capsula a false
+
                 elif Partida.tablero[Jugador.y][Jugador.x + 1] == 3:
                     Partida.tablero[Jugador.y][Jugador.x + 1] = 4
+                    Partida.score+=4
                     
                 Jugador.x += 1
-           
+                for FantasmaAux in Partida.Fantasmas:
+                    if FantasmaAux.posicion_x == Jugador.x + 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == False :
+                       MoverFantasmas=False
+                    elif FantasmaAux.posicion_x == Jugador.x + 1 and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
+                       FantasmaAux.estado=False
+
             draw_button()
+            botón_inspector()
             
             
 
