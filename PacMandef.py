@@ -106,6 +106,7 @@ class Fantasma:
                 MoverFantasmas =False
             elif((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == True ):    
                 self.estado=False
+                ListaFantasmas.append(Fantasma(rojo))
                 
 
     def moverDerecha(self,tablero,xJugador, yJugador, EstadoCapsula):
@@ -117,6 +118,7 @@ class Fantasma:
                 MoverFantasmas=False
             elif((next_x == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == True ):
                 self.estado=False
+                ListaFantasmas.append(Fantasma(rojo))
 
     def moverArriba(self,tablero,xJugador, yJugador, EstadoCapsula):
         global MoverFantasmas
@@ -127,6 +129,7 @@ class Fantasma:
                 MoverFantasmas=False
             elif((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador  and EstadoCapsula == True ):    
                 self.estado=False
+                ListaFantasmas.append(Fantasma(rojo))
 
 
     def moverAbajo(self,tablero,xJugador, yJugador, EstadoCapsula):
@@ -138,6 +141,7 @@ class Fantasma:
                 MoverFantasmas=False
             elif((next_y == xJugador or self.posicion_x == xJugador) and self.posicion_y == yJugador and EstadoCapsula == True):
                 self.estado=False
+                ListaFantasmas.append(Fantasma(rojo))
 
 #Inicializa Pygame y carga la música en la función play()
 pygame.mixer.init()
@@ -215,7 +219,6 @@ def ventana_inicio():
         global score
         global Partida
         nombre = nombreJugadorActual
-        print(nombre)
         try:
             with open('data.txt', 'a') as file:  # agrega al txt los datos
 
@@ -273,7 +276,7 @@ def ventana_inicio():
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -486,7 +489,7 @@ def ventana_inicio():
 
                          # Definir una función para cambiar la cápsula a False después de 10 segundos
                     def desactivar_capsula():
-                        time.sleep(20)
+                        time.sleep(10)
                         Jugador.capsula = False
 
                     # Iniciar un hilo para ejecutar la función desactivar_capsula
@@ -508,6 +511,7 @@ def ventana_inicio():
                         
                     elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y  and Jugador.capsula == True :
                        FantasmaAux.estado=False
+                       ListaFantasmas.append(Fantasma(rojo))
             if keys[pygame.K_DOWN] and Jugador.y < 39  and Partida.tablero[Jugador.y + 1][Jugador.x] != 0:
                 
                 if Partida.tablero[Jugador.y + 1][Jugador.x] == 1:
@@ -521,7 +525,7 @@ def ventana_inicio():
 
                          # Definir una función para cambiar la cápsula a False después de 10 segundos
                     def desactivar_capsula():
-                        time.sleep(20)
+                        time.sleep(10)
                         Jugador.capsula = False
 
                     # Iniciar un hilo para ejecutar la función desactivar_capsula
@@ -545,6 +549,7 @@ def ventana_inicio():
                        MoverFantasmas=False
                     elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y  and Jugador.capsula == True :
                        FantasmaAux.estado=False
+                       ListaFantasmas.append(Fantasma(rojo))
             if keys[pygame.K_LEFT] and Jugador.x > 0 and Partida.tablero[Jugador.y][Jugador.x - 1] != 0:
                 
                 if Partida.tablero[Jugador.y][Jugador.x - 1] == 1:
@@ -558,7 +563,7 @@ def ventana_inicio():
 
                          # Definir una función para cambiar la cápsula a False después de 10 segundos
                     def desactivar_capsula():
-                        time.sleep(20)
+                        time.sleep(10)
                         Jugador.capsula = False
 
                     # Iniciar un hilo para ejecutar la función desactivar_capsula
@@ -582,6 +587,7 @@ def ventana_inicio():
                        MoverFantasmas=False
                     elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
                        FantasmaAux.estado=False
+                       ListaFantasmas.append(Fantasma(rojo))
 
             if keys[pygame.K_RIGHT] and Jugador.x < 35 and Partida.tablero[Jugador.y][Jugador.x + 1] != 0:
                 
@@ -595,7 +601,7 @@ def ventana_inicio():
 
                          # Definir una función para cambiar la cápsula a False después de 10 segundos
                     def desactivar_capsula():
-                        time.sleep(20)
+                        time.sleep(10)
                         Jugador.capsula = False
 
                     # Iniciar un hilo para ejecutar la función desactivar_capsula
@@ -617,6 +623,7 @@ def ventana_inicio():
                        MoverFantasmas=False
                     elif FantasmaAux.posicion_x == Jugador.x and FantasmaAux.posicion_y == Jugador.y and Jugador.capsula == True :
                        FantasmaAux.estado=False
+                       ListaFantasmas.append(Fantasma(rojo))
 
             draw_button()
             botón_inspector()
