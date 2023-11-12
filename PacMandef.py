@@ -238,8 +238,13 @@ def ventana_inicio():
         ventana8.resizable(height=False, width=False)
         ventana8.update()
 
-        #texto= tk.Label(canvasC8, text=f"Juego{Matriz}",font=("Courier New", 5, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
-        #texto.place(x=50, y=180)
+        texto= tk.Label(canvasC8, text=f"Puntaje:{Partida.score}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+        texto.place(x=50, y=25)
+
+        texto1= tk.Label(canvasC8, text=f"Jugador:{entryNombre}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+        texto1.place(x=50, y=5)
+
+        
 
         etiqueta = tk.Label(canvasC10, text="Matriz:", font=("Courier New", 6, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
         etiqueta.pack()
