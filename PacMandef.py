@@ -241,10 +241,10 @@ def ventana_inicio():
         ventana8.update()
 
         texto= tk.Label(canvasC8, text=f"Puntaje:{Partida.score}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
-        texto.place(x=50, y=25)
+        texto.place(x=35, y=25)
 
-        texto1= tk.Label(canvasC8, text=f"Jugador:{entryNombre}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
-        texto1.place(x=50, y=5)
+        texto1= tk.Label(canvasC8, text=f"Nombre jugador:{entryNombre}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+        texto1.place(x=35, y=5)
 
         
 
@@ -255,6 +255,46 @@ def ventana_inicio():
             texto_fila = " ".join(map(str, fila))
             fila_label = tk.Label(canvasC10, text=texto_fila,font=("Courier New", 6, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
             fila_label.pack()
+        
+        for FantasmaAux in Partida.Fantasmas:
+                global rojo,naranja,rosado, celeste
+                if FantasmaAux.color == rojo:
+                    Posiciony= FantasmaAux.posicion_y
+                    Posicionx= FantasmaAux.posicion_x
+                    Estado = FantasmaAux.estado
+                    texto1= tk.Label(canvasC8, text=f"Fantasma rojo:\nPosicion en y: {Posiciony}\nPosicion en x: {Posicionx}\nEstado: {Estado}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+                    texto1.place(x=35, y=65)
+                if FantasmaAux.color == naranja:
+                    Posiciony= FantasmaAux.posicion_y
+                    Posicionx= FantasmaAux.posicion_x
+                    Estado = FantasmaAux.estado
+                    texto1= tk.Label(canvasC8, text=f"Fantasma naranja:\nPosicion en y: {Posiciony}\nPosicion en x: {Posicionx}\nEstado: {Estado}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+                    texto1.place(x=35, y=155)
+                if FantasmaAux.color == celeste:
+                    Posiciony= FantasmaAux.posicion_y
+                    Posicionx= FantasmaAux.posicion_x
+                    Estado = FantasmaAux.estado
+                    texto1= tk.Label(canvasC8, text=f"Fantasma celeste:\nPosicion en y: {Posiciony}\nPosicion en x: {Posicionx}\nEstado: {Estado}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+                    texto1.place(x=35, y=255)
+                if FantasmaAux.color == rosado:
+                    Posiciony= FantasmaAux.posicion_y
+                    Posicionx= FantasmaAux.posicion_x
+                    Estado = FantasmaAux.estado
+                    texto1= tk.Label(canvasC8, text=f"Fantasma rosado:\nPosicion en y: {Posiciony}\nPosicion en x: {Posicionx}\nEstado: {Estado}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+                    texto1.place(x=35, y=345)
+
+       
+        Jugadorx =  Partida.Jugador.x
+        Jugadory =  Partida.Jugador.y
+        JugadorEs = Partida.Jugador.capsula 
+
+        texto9= tk.Label(canvasC8, text=f"Jugador:\nPosicion en y: {Jugadory}\nPosicion en x: {Jugadorx}\nCapsula: {JugadorEs}",font=("Courier New", 12, "bold"), fg=("white"), bg=("black"), justify=tk.LEFT)
+        texto9.place(x=35, y=440)
+
+
+        
+
+            
            
         
         #Botón de back Ventana Inspector
@@ -308,11 +348,11 @@ def ventana_inicio():
        
        
         tableroJuego = [
-                [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -322,8 +362,8 @@ def ventana_inicio():
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 1, 1, 1],
+                [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -337,13 +377,13 @@ def ventana_inicio():
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
@@ -805,7 +845,7 @@ def ventana_inicio():
         
         
          #informacion de la ventana
-        titulo2=tkinter.Label(canvasC4, text= "Programadores:"
+        titulo2=tkinter.Label(canvasC4, text= "\nProgramadores:"
                                             "\n Joselyn María Salas Ramírez"
                                             " \n Edad: 19 años"
                                             "\n Carnet: 2023210441."
@@ -833,7 +873,7 @@ def ventana_inicio():
     #Botones Principales VENTANA 1
     boton1 = tk.Button(ventana1, text="Jugar", command=ventana_nombre,font=("Courier New", 16, "bold"), fg=("yellow"), bg=("black"))
     boton1.place(x=353, y=50)
-    boton2 = tk.Button(ventana1, text="Configuración",command=abrirventana4, font=("Courier New", 16, "bold"), fg=("yellow"), bg=("black"))
+    boton2 = tk.Button(ventana1, text="Música",command=abrirventana4, font=("Courier New", 16, "bold"), fg=("yellow"), bg=("black"))
     boton2.place(x=300, y=420)
     boton3 = tk.Button(ventana1, text="Ayuda", command=abrirventana5, font=("Courier New", 14, "bold"), fg=("yellow"), bg=("black"))
     boton3.place(x=30, y=420)
