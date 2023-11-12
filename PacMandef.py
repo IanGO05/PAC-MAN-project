@@ -46,6 +46,8 @@ capsula = 2
 alimentoComida = 3
 vacio = 4
 
+contador = 0
+
 MoverFantasmas= True
 
 ListaFantasmas = []
@@ -66,13 +68,13 @@ button_y = ventana_alto - button_height - 10
 button_ins_y = ventana_alto - button_height - 55
 
 class Juego:
-    def __init__(self, tablero, nivel, score, Jugador, Fantasmas ):
+    def __init__(self, tablero, nivel, score, Jugador, Fantasmas):
         self.tablero = tablero
         self.nivel = nivel
         self.score = score
         self.Jugador = Jugador
         self.Fantasmas = Fantasmas
-
+        
     def iniciarJuego(self):
         self.score = 0
 
@@ -264,8 +266,6 @@ def ventana_inicio():
         botonBack.place(x=650, y=420)
 
 
-
-
     #Ventana JUEGO
     def Ventana_juego(nivel):
         pygame.init()
@@ -295,7 +295,8 @@ def ventana_inicio():
             score_text = font.render(f"Score: {Partida.score}", True, amarillo)
             
             ventana.blit(score_text, (10, 600))
-        
+            
+            
         def nombre():
             global nombreJugadorActual
             if(entryNombre != ""):
@@ -393,7 +394,7 @@ def ventana_inicio():
                 
                 print("Se acabo el juego")
                            
-                #ventana1.deiconify()
+                
                 
 
         for fantasma in Partida.Fantasmas:
@@ -662,7 +663,7 @@ def ventana_inicio():
 
 
 
-            #ESTO ES DIOS, solucino el error del boton y pausa el juego cuando abrimos la ventana inspector
+            #Soluciono el error del boton y pausa el juego cuando abrimos la ventana inspector
             ventana_inspector.update()
         
 
@@ -798,10 +799,24 @@ def ventana_inicio():
         ventana6.configure(background="black")
         canvasC4 = tk.Canvas(ventana6, width=800, height=680, borderwidth=0, highlightthickness=0, background="black")
         canvasC4.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-        titulo= tk.Label(canvasC4, text="Informacion Personal", fg=("white"), font=("Courier New", 12, "bold"), bg=("black"))
+        titulo= tk.Label(canvasC4, text="Informacion Personal", fg=("yellow"), font=("Courier New", 12, "bold"), bg=("black"))
         titulo.place(x=308, y=110)
         ventana6.resizable(height=False, width=False)
-    
+        
+        
+         #informacion de la ventana
+        titulo2=tkinter.Label(canvasC4, text= "Programadores:"
+                                            "\n Joselyn María Salas Ramírez"
+                                            " \n Edad: 19 años"
+                                            "\n Carnet: 2023210441."
+                                            "\n"
+                                            "\n Ian Yoel Gómez Oses"
+                                            " \n Edad: 18 años"
+                                            "\n Carnet: 2023216136."
+                              , font=("Courier New", 12), fg= "yellow", bg="black")
+        titulo2.place(x=250, y=200)
+        
+   
     
     #Botón de back Ventana "Acerca de"
         def back():
@@ -829,4 +844,3 @@ def ventana_inicio():
     
     ventana1.mainloop() 
 ventana_inicio()
-
